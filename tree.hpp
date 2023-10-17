@@ -1,6 +1,7 @@
 
 #define compLT (a, b)(a < b)
 #define compEQ (a, b)(a == b)
+#include <iostream>
 
 namespace MySTL
 {
@@ -16,10 +17,11 @@ namespace MySTL
     T data = 0;
     bool color;
     Node *left, *right, *parent;
-    Node(T value)
+    Node(T value, Color color = RED)
     {
       data = value;
       left = right = parent = nullptr;
+      color = color;
     }
   };
 
@@ -28,14 +30,15 @@ namespace MySTL
   public:
     RBTree();
     void insert(T value);
-
-    ~RBTree();
+    static void printInorder(Node *rt);
+    ~RBTree() = default;
+    Node *root;
 
   protected:
   private:
-    Node *root;
-    void leftRotation();
-    void rightRotation();
-    void recolor();
+    void insertRecolor(Node *inserted);
+
+    void leftRotation(Node *inserted);
+    void rightRotation(Node *inserted);
   };
 }

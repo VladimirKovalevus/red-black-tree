@@ -11,9 +11,10 @@ namespace MySTL
     BLACK
   };
   typedef int T;
-
+  // template <typename T, typename V>
   struct Node
   {
+
     T data = 0;
     bool color;
     Node *left, *right, *parent;
@@ -24,21 +25,25 @@ namespace MySTL
       color = color;
     }
   };
-
+  // template <typename T, typename V>
   class RBTree
   {
   public:
     RBTree();
-    void insert(T value);
+    Node *insert(T value);
+    void deleteNode(Node *node);
     static void printInorder(Node *rt);
+    Node *find(T value);
     ~RBTree() = default;
     Node *root;
 
   protected:
   private:
     void insertRecolor(Node *inserted);
-
+    void deleteRecolor(Node *node);
+    Node *moveDeletion(Node *node, T data);
     void leftRotation(Node *inserted);
     void rightRotation(Node *inserted);
+    Node *minValueNode(Node *&node);
   };
 }

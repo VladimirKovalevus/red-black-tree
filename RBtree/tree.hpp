@@ -1,10 +1,14 @@
-
+#ifndef _MYSTL_RBTREE_
+#define _MYSTL_RBTREE_
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
+#include <limits>
 
-namespace MySTL
+#define MAX_SIZE 10000;
+#define DEBUG
+namespace mystl
 {
   enum Color
   {
@@ -30,14 +34,27 @@ namespace MySTL
   class RBTree
   {
   public:
-    typedef _Key key_type;
-    typedef _Value value_type;
+    using key_type = _Key;
+    using mapped_type = _Value;
+    using value_type = std::pair<const key_type, mapped_type>;
+    using reference = value_type &;
+    using const_reference = const value_type &;
 
     RBTree()
     {
       root = nullptr;
     };
-    Node<_Key, _Value> *insert(std::pair<_Key, _Value> value)
+    RBTree(const RBTree &other);
+    RBTree(RBTree &&other)
+    {
+      if (this != &other)
+      {
+        root = other.root;
+        other.clear()
+      }
+    }
+
+    Node<_Key, _Value> *insert(value_type value)
     {
       if (root == nullptr)
       {
@@ -81,25 +98,14 @@ namespace MySTL
       Node<_Key, _Value> *node_ = moveDeletion(node, node->data.first);
       deleteRecolor(node_);
     }
-    static void printInorder(Node<_Key, _Value> *rt)
+#ifdef DEBUG
+    void printInorder()
     {
-      if (rt == nullptr)
-      {
-        return;
-      }
-      printInorder(rt->left);
-      if (rt->color == RED)
-      {
-        std::cout << "\033[101m";
-      }
-      else
-      {
-        std::cout << "\033[40m";
-      }
-      std::cout << rt->data.first << " "; //<< rt->data.second;
-      printInorder(rt->right);
+      inorderTraversial(root);
     }
-    Node<_Key, _Value> *find(_Key value)
+#endif
+
+    Node<_Key, _Value> *find(value)
     {
       Node<_Key, _Value> *it = root;
       while (it)
@@ -120,11 +126,47 @@ namespace MySTL
       }
       return nullptr;
     }
-    ~RBTree() = default;
-    Node<_Key, _Value> *root;
+    virtual ~RBTree()
+    {
+      destroyTree(root);
+    }
+    bool empty()
+    {
+      return root == nullptr;
+    }
+    size_t max_size()
+    {
+      return std::numeric_limits<size_t>::max() / sizeof(RBTree<_Key, _Value>);
+    }
+    void clear()
+    {
+      destroyTree(root);
+      root = nullptr;
+    }
 
-  protected:
   private:
+    Node<_Key, _Value> *root;
+    int size;
+
+    static void inorderTraversial(Node<_Key, _Value> *rt)
+    {
+      if (!rt)
+      {
+        return;
+      }
+      inorderTraversial(rt->left);
+      std::cout << rt->data.first << " ";
+      inorderTraversial(rt->right);
+    }
+    void destroyTree(Node<_Key, _Value> *rt)
+    {
+      if (!rt)
+        return;
+
+      destroyTree(rt->left);
+      destroyTree(rt->right);
+      delete rt;
+    }
     void insertRecolor(Node<_Key, _Value> *inserted)
     {
 
@@ -316,7 +358,7 @@ namespace MySTL
         }
       }
     }
-    Node<_Key, _Value> *moveDeletion(Node<_Key, _Value> *node, _Key data)
+    Node<_Key, _Value> *moveDeletion(Node<_Key, _Value> *node, key_type data)
     {
       if (node == nullptr)
         return node;
@@ -401,5 +443,71 @@ namespace MySTL
 
       return ptr;
     }
+    Node<_Key, _Value> *maxValueNode(Node<_Key, _Value> *&node)
+    {
+      Node<_Key, _Value> *ptr = node;
+
+      while (ptr->right != nullptr)
+        ptr = ptr->right;
+
+      return ptr;
+    }
+  };
+
+  template <typename _Key, typename _Value>
+  class ConstIterator
+  {
+  protected:
+    Node<_Key, _Value> *node;
+
+  public:
+    ConstIterator(Node<_Key, _Value> *node) : node{node}
+    {
+    }
+    ConstIterator operator++()
+    {
+      if (node->right)
+      {
+        node = node->right;
+        while (node->left)
+        {
+          node = node->left;
+        }
+      }
+      else if (!node->left && !node->right)
+      {
+        if (node->parent)
+        {
+          if (node->parent->left == node)
+            node = node->parent;
+          else if (node->parent->right == node)
+            if (node->parent && node->parent->parent)
+              node = node->parent->parent;
+        }
+      }
+      else if (node->parent)
+      {
+        node = node->parent;
+      }
+    }
+    ConstIterator operator++(int)
+    {
+    }
+  };
+  template <typename _Key, typename _Value>
+  class Iterator : public ConstIterator
+  {
+  private:
+    Node<_Key, _Value> *node;
+
+  public:
+    ConstIterator(Node<_Key, _Value> *node) : node{node}
+    {
+    }
+    ConstIterator operator++()
+    {
+    }
   };
 }
+
+#endif //_MYSTL_RBTREE_

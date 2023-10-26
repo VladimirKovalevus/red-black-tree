@@ -291,7 +291,13 @@ class RBTree {
     other.end_ = end_;
     this->end_ = tmp;
   }
-  void merge(RBTree &other) {}
+  void merge(RBTree &other) {
+
+    for(auto it= other.begin(); it !=other.end();++it){
+      insert({it->first,it->second});
+    }
+    other.clear();
+  }
 
  protected:
   Node<_Key, _Value> *root;

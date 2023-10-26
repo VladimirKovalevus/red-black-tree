@@ -4,9 +4,12 @@
 #include <cstdlib>
 #include <ctime>
 #include <exception>
+#include <initializer_list>
 #include <iostream>
 #include <limits>
 #include <stdexcept>
+#include <utility>
+#include <vector>
 #define DEBUG
 
 
@@ -179,6 +182,17 @@ class RBTree {
 
       other.clear();
     }
+  }
+  RBTree(std::initializer_list<value_type> init):RBTree() {
+    for(auto it = init.begin();it!=init.end();++it){
+      insert({it->first,it->second});
+    }
+  }
+  template <typename  ...Args>
+  std::vector<std::pair<Iterator,bool>> insert_many(Args&&... args){
+      std::vector<std::pair<Iterator,bool>> vec;
+      (vec.push_back({insert(args),true}),...);
+      return vec;
   }
 
   Node<_Key, _Value> *insert(value_type value) {

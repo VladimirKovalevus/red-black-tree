@@ -1,49 +1,39 @@
 #include "tree.hpp"
 
-#include <string>
-int main()
-{
-  MySTL::RBTree<std::string, std::string> tree;
 
-  tree.insert(std::pair<std::string, std::string>("Вот это да", "5125"));
-  MySTL::RBTree<std::string, std::string>::printInorder(tree.root);
-  std::cout << std::endl;
+int main(){
 
-  tree.insert(std::pair<std::string, std::string>("Оно живое", "da"));
-  MySTL::RBTree<std::string, std::string>::printInorder(tree.root);
-  std::cout << std::endl;
+    mystl::RBTree<int, int> a;
 
-  // tree.insert(std::pair<std::string, std::string>(3, 2));
-  // MySTL::RBTree<std::string, std::string>::printInorder(tree.root);
-  // std::cout << std::endl;
+    a.insert({123,13});
+    a.insert({12,13});
+    a.insert({121,13});
+  
+    a.insert({1111,13});
+    a.insert({1,13});
+    a.insert({2,13});
+  
+    for(auto it = a.begin(); it !=a.end();++it){
+       std::cout << it->first<< " ";
+    }
 
-  // tree.insert(std::pair<std::string, std::string>(4, 2));
-  // MySTL::RBTree<std::string, std::string>::printInorder(tree.root);
-  // std::cout << std::endl;
+    std::cout<<"\n";
 
-  // tree.insert(std::pair<std::string, std::string>(5, 2));
-  // MySTL::RBTree<std::string, std::string>::printInorder(tree.root);
-  // std::cout << std::endl;
+    auto fr = a.find(2);
+    auto sc = a.find(1);
 
-  // tree.insert(std::pair<std::string, std::string>(-5, 2));
-  // MySTL::RBTree<std::string, std::string>::printInorder(tree.root);
-  // std::cout << std::endl;
-  // tree.insert(std::pair<std::string, std::string>(-3, 2));
+    a.erase(fr);
+    a.erase(sc);
 
-  // MySTL::RBTree<std::string, std::string>::printInorder(tree.root);
-  // std::cout << std::endl;
-  // MySTL::Node<std::string, std::string> *point = tree.find(-3);
-  // tree.deleteNode(point);
+    sc=a.find(123);
+    a[111]=123;
+    a.at(111);
+    for(auto it = a.begin(); it !=a.end();++it){
+       std::cout << it->first<< " ";
+    }
+    std::cout <<'\n';
+     for(auto it = a.begin(); it !=a.end();++it){
+       std::cout << it->second<< " ";
+    }
 
-  // MySTL::RBTree<std::string, std::string>::printInorder(tree.root);
-  // std::cout << std::endl;
-  // point = tree.find(1);
-  // tree.deleteNode(point);
-
-  // MySTL::RBTree<std::string, std::string>::printInorder(tree.root);
-  // std::cout << std::endl;
-  // point = tree.find(-3);
-  // tree.deleteNode(point);
-
-  // MySTL::RBTree<std::string, std::string>::printInorder(tree.root);
 }

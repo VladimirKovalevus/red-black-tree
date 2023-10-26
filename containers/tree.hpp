@@ -49,6 +49,7 @@ struct Node {
 
 template <typename _Key, typename _Value>
 class RBTree {
+  protected:
   class Iterator {
     friend class RBTree<_Key, _Value>;
     using key_type = _Key;
@@ -168,12 +169,12 @@ class RBTree {
     root = nullptr;
     end_ = new Node<_Key, _Value>({_Key(), _Value()});
   };
-  RBTree(const RBTree &other) {
+  RBTree(const RBTree &other): RBTree() {
     for (auto it = other.begin(); it != other.end(); it++) {
       insert({it->first, it->second});
     }
   }
-  RBTree(RBTree &&other) : end_() {
+  RBTree(RBTree &&other) : RBTree() {
     if (this != &other) {
       root = other.root;
       root->parent = end_;
@@ -195,22 +196,21 @@ class RBTree {
       return vec;
   }
 
-  Node<_Key, _Value> *insert(value_type value) {
+  Iterator insert(value_type value) {
     if (root == nullptr) {
       root = new Node<_Key, _Value>(value);
       root->color = BLACK;
       root->parent = end_;
       end_->right = root;
       end_->left = root;
-
-      return root;
+      return Iterator(root);
     } else {
       root->parent = nullptr;
       Node<_Key, _Value> *current = root;
       Node<_Key, _Value> *parent = current;
       while (current) {
         if (current->data.first == value.first) {
-          return current;
+          return Iterator(current);
         }
         parent = current;
         current =
@@ -228,7 +228,7 @@ class RBTree {
       this->root->parent = end_;
       end_->right = root;
       end_->left = root;
-      return current;
+      return Iterator(current);
     }
   }
   void deleteNode(Node<_Key, _Value> *node) {
